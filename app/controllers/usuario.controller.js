@@ -2,21 +2,28 @@
 const db = require("../models");
 const Usuario = db.usuarios;
 const Op = db.Sequelize.Op;
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
 
 // Create and Save a new Client
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
+    try{
     // Validamos que dentro del  request no venga vacio el nombre, de lo contrario returna error
-    if (!req.body.nombre) {
+    if (!req.body.correo || !req.body.contrasena) {
         res.status(400).send({
-            message: "Content can not be empty!"
+            message: "Necesita ingresar el correo o la contraseña!"
         });
         return;
     }
 
+    const hashedPassword = await bcrypt.hash(req.body.contrasena, 10);
+
     // Create a Client, definiendo una variable con la estructura del reques para luego solo ser enviada como parametro mas adelante. 
     const usuario = {
         correo: req.body.correo,
-        contrasena: req.body.contrasena,
+        contrasena: hashedPassword,
+        role: req.body.role || "user",
         // utilizando ? nos ayuda a indicar que el paramatro puede ser opcional dado que si no viene, le podemos asignar un valor default
         status: req.body.status ? req.body.status : false
     };
@@ -32,6 +39,10 @@ exports.create = (req, res) => {
                     err.message || "Some error occurred while creating the User."
             });
         });
+    } catch(err){
+        res.status(500).send({ message: err.message });
+        console.log("hubo un error inesperado", err.message)
+    }
 };
 
 // Retrieve all Client from the database.
@@ -52,18 +63,28 @@ exports.findAll = (req, res) => {
 };
 
 // Find a single Tutorial with an id
-exports.findOne = (req, res) => {
-    const id = req.params.id;
+exports.findOne = async (req, res) => {
+    try {
+        const usuario = await Usuario.findOne({ where: { correo: req.body.correo } });
+        if (!usuario) {
+            return res.status(404).send({ message: "Usuario no encontrado" });
+        }
 
-    Usuario.findByPk(id)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error retrieving User with id=" + id
-            });
-        });
+        const validPassword = await bcrypt.compare(req.body.contrasena, usuario.contrasena);
+        if (!validPassword) {
+            return res.status(401).send({ message: "Contraseña incorrecta" });
+        }
+
+        const token = jwt.sign(
+            { id: usuario.id, role: usuario.role },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+        );
+
+        res.send({ message: "Login exitoso", token });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
 };
 
 // Update a Tutorial by the id in the request
