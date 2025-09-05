@@ -40,6 +40,13 @@ db.usuarios = require("./usuario.model.js")(sequelize, Sequelize);
   console.error("❌ Error al cargar modelo 'usuario':", err.message);
 }
 
+try {
+db.docentes = require("./docente.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'docente' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'docente':", err.message);
+}
+
 
 // Aquí puedes seguir importando otros modelos de forma similar
 // Ejemplo: db.productos = require("./producto.model.js")(sequelize, Sequelize);
