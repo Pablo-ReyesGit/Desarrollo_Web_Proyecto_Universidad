@@ -34,7 +34,17 @@ try {
   console.log("✅ libros.usuario.js cargado correctamente");
 } catch (err) {
   console.error("❌ Error al cargar usuario.routes.js:", err.message);
+
 }
+
+try {
+  require("./app/routes/student.routes.js")(app);
+  console.log("✅ student.routes.js cargado correctamente");
+} catch (err) {
+  console.error("❌ Error al cargar student.routes.js:", err.message);
+}
+
+
 // set port, listen for requests
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
