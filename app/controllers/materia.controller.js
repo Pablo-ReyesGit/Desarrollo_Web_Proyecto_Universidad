@@ -1,21 +1,23 @@
 // importamos db los modelos en este caso si tenemos uno o mas, se puede referenciar db."nombreModelo".   
 const db = require("../models");
-const Carrera = db.carreras;
+const Materia = db.materias;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Client
 exports.create = (req, res) => {
-    if (!req.body.nombre || !req.body.facultad || !req.body.duracion) {
+    if (!req.body.nombre || !req.body.id_carrera) {
         return res.status(400).send({ message: "debe incluir todos los detalles necesarios." });
     }
 
-    const carrera = {
+    const materia = {
         nombre: req.body.nombre,
-        facultad: req.body.facultad,
-        duracion: req.body.duracion,
+        creditos: req.body.creditos,
+        cupo_maximo: req.body.Semestre,
+        Obligacion: req.body.Obligacion,
+        id_carrera: req.body.id_carrera,
    };
 
-    Carrera.create(carrera)
+    Materia.create(materia)
         .then(data => res.send(data))
         .catch(err => {
             res.status(500).send({ message: err.message || "Error al crear el notificacion." });
@@ -27,7 +29,7 @@ exports.findAll = (req, res) => {
     const nombre = req.query.nombre;
     var condition = nombre ? { nombre: { [Op.iLike]: `%${nombre}%` } } : null;
 
-    Carrera.findAll({ where: condition })
+    Materia.findAll({ where: condition })
         .then(data => {
             res.send(data);
         })
@@ -57,7 +59,7 @@ exports.findOne = async (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id;
 
-    Carrera.update(req.body, {
+    Materia.update(req.body, {
         where: { id: id }
     })
         .then(num => {
@@ -82,7 +84,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const id = req.params.id;
     // utilizamos el metodo destroy para eliminar el objeto mandamos la condicionante where id = parametro que recibimos 
-    Carrera.destroy({
+    Materia.destroy({
         where: { id: id }
     })
         .then(num => {
@@ -105,7 +107,7 @@ exports.delete = (req, res) => {
 
 // Delete all Clients from the database.
 exports.deleteAll = (req, res) => {
-    Carrera.destroy({
+    Materia.destroy({
         where: {},
         truncate: false
     })
@@ -122,7 +124,7 @@ exports.deleteAll = (req, res) => {
 
 // find all active Client, basado en el atributo status vamos a buscar que solo los clientes activos
 exports.findAllStatus = (req, res) => {
-    Carrera.findAll({ where: { status: true } })
+    Materia.findAll({ where: { status: true } })
         .then(data => {
             res.send(data);
         })
