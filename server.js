@@ -69,6 +69,28 @@ try {
 } catch (err) {
   console.error("❌ Error al cargar curso.routes.js:", err.message);
 }
+
+try {
+  require("./app/routes/estudiantecarrera.routes.js")(app);
+  console.log("✅ estudiantecarrera.routes.js cargado correctamente");
+} catch (err) {
+  console.error("❌ Error al cargar estudiantecarrera.routes.js:", err.message);
+}
+
+try {
+  require("./app/routes/estudiante.routes.js")(app);
+  console.log("✅ estudiante.routes.js cargado correctamente");
+} catch (err) {
+  console.error("❌ Error al cargar estudiante.routes.js:", err.message);
+}
+
+
+try {
+  require("./app/routes/horario.routes.js")(app);
+  console.log("✅ horario.routes.js cargado correctamente");
+} catch (err) {
+  console.error("❌ Error al cargar horario.routes.js:", err.message);
+}
 // set port, listen for requests
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
