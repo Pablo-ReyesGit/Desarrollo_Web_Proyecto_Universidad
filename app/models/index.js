@@ -47,7 +47,18 @@ try {
 }
 
 try {
+<<<<<<< HEAD
   db.carreras = require("./carrera.model.js")(sequelize, Sequelize);
+=======
+<<<<<<< HEAD
+db.administradores = require("./administrador.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'administrador' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'administrador':", err.message);
+}
+=======
+db.carreras = require("./carrera.model.js")(sequelize, Sequelize);
+>>>>>>> f692f877af91527fe87fca341ddcca63ebb9dcbc
   console.log("✅ Modelo 'carrera' cargado correctamente.");
 } catch (err) {
   console.error("❌ Error al cargar modelo 'carrera':", err.message);
@@ -81,12 +92,16 @@ try {
   console.error("❌ Error al cargar modelo 'estudiante_carrera':", err.message);
 }
 
+<<<<<<< HEAD
 try {
   db.horarios = require("./horario.model.js")(sequelize, Sequelize);
   console.log("✅ Modelo 'horario' cargado correctamente.");
 } catch (err) {
   console.error("❌ Error al cargar modelo 'horario':", err.message);
 }
+=======
+>>>>>>> 0827e69c3efaf3ffd610aa861ea31078e38edb58
+>>>>>>> f692f877af91527fe87fca341ddcca63ebb9dcbc
 
 // =======================
 // Exportamos db

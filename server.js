@@ -50,6 +50,14 @@ try {
 }
 
 try {
+<<<<<<< HEAD
+  require("./app/routes/administrador.routes.js")(app);
+  console.log("✅ administrador.routes.js cargado correctamente");
+} catch (err) {
+  console.error("❌ Error al cargar administrador.routes.js:", err.message);
+}
+
+=======
   require("./app/routes/carrera.routes.js")(app);
   console.log("✅ carrera.routes.js cargado correctamente");
 } catch (err) {
@@ -69,6 +77,7 @@ try {
 } catch (err) {
   console.error("❌ Error al cargar curso.routes.js:", err.message);
 }
+<<<<<<< HEAD
 
 try {
   require("./app/routes/estudiantecarrera.routes.js")(app);
@@ -91,6 +100,9 @@ try {
 } catch (err) {
   console.error("❌ Error al cargar horario.routes.js:", err.message);
 }
+=======
+>>>>>>> 0827e69c3efaf3ffd610aa861ea31078e38edb58
+>>>>>>> f692f877af91527fe87fca341ddcca63ebb9dcbc
 // set port, listen for requests
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
