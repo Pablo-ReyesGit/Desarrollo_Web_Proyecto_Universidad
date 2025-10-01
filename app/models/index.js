@@ -48,11 +48,36 @@ db.docentes = require("./docente.model.js")(sequelize, Sequelize);
 }
 
 try {
+<<<<<<< HEAD
 db.administradores = require("./administrador.model.js")(sequelize, Sequelize);
   console.log("✅ Modelo 'administrador' cargado correctamente.");
 } catch (err) {
   console.error("❌ Error al cargar modelo 'administrador':", err.message);
 }
+=======
+db.carreras = require("./carrera.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'carrera' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'carrera':", err.message);
+}
+
+try {
+db.materias = require("./materia.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'materia' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'materia':", err.message);
+}
+
+try {
+db.cursos = require("./curso.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'curso' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'curso':", err.message);
+}
+
+
+
+>>>>>>> 0827e69c3efaf3ffd610aa861ea31078e38edb58
 
 // Aquí puedes seguir importando otros modelos de forma similar
 // Ejemplo: db.productos = require("./producto.model.js")(sequelize, Sequelize);
