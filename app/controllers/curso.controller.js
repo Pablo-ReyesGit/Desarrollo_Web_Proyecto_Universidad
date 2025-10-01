@@ -108,10 +108,6 @@ exports.update = async (req, res) => {
         where: { nombre: req.body.nombre_materia },
         attributes: ["id"]
       });
-      
-      if (!materia) {
-        return res.status(404).json({ message: "Materia no encontrada." });
-      }
       cambios.id_materia = materia.id;
     }
 
@@ -121,10 +117,6 @@ exports.update = async (req, res) => {
         where: { carnet: req.body.carnet_docente },
         attributes: ["id"]
       });
-
-      if (!docente) {
-        return res.status(404).json({ message: "Docente no encontrado." });
-      }
       cambios.id_docente = docente.id;
     }
 
