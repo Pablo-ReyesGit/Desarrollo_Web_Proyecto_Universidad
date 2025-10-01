@@ -1,20 +1,31 @@
 // importamos db los modelos en este caso si tenemos uno o mas, se puede referenciar db."nombreModelo".   
 const db = require("../models");
 const Materia = db.materias;
+const Carrera = db.carreras;
 const Op = db.Sequelize.Op;
+const sequelize = db.sequelize;
 
 // Create and Save a new Client
-exports.create = (req, res) => {
-    if (!req.body.nombre || !req.body.id_carrera) {
+exports.create = async (req, res) => {
+    if (!req.body.nombre || !req.body.nombre_carrera) {
         return res.status(400).send({ message: "debe incluir todos los detalles necesarios." });
+    }
+
+    const carrera = await Carrera.findOne({
+      where: { nombre: req.body.nombre_carrera }, // 👈 asumiendo que el campo se llama "carnet"
+      attributes: ["id"]
+    });
+
+    if (!carrera) {
+      return res.status(404).json({ message: "Carrera no encontrado." });
     }
 
     const materia = {
         nombre: req.body.nombre,
         creditos: req.body.creditos,
-        cupo_maximo: req.body.Semestre,
+        Semestre: req.body.Semestre,
         Obligacion: req.body.Obligacion,
-        id_carrera: req.body.id_carrera,
+        id_carrera: carrera.id
    };
 
     Materia.create(materia)
@@ -43,41 +54,96 @@ exports.findAll = (req, res) => {
 
 // Find a single Tutorial with an id
 exports.findOne = async (req, res) => {
-    try {
-        const carrera = await Usuario.findOne({ where: { correo: req.body.carrera } });
-        if (!carrera) {
-            return res.status(404).send({ message: "Usuario no encontrado" });
-        }
 
-        res.send({ message: "Login exitoso", token });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
+    const nombre = req.params.nombre;
+
+    if (!nombre) {
+        console.warn("No se proporcionó nombre en la consulta");
+        return res.status(400).send({
+            message: "debe proporcionar el nombre de la materia."
+        });
     }
-};
 
-// Update a Tutorial by the id in the request
-exports.update = (req, res) => {
-    const id = req.params.id;
+    // Para Oracle: búsqueda insensible a mayúsculas
+    var condition = sequelize.where(
+        sequelize.fn("UPPER", sequelize.col("nombre")),
+        { [Op.like]: `%${nombre.toUpperCase()}%` }
+    );
 
-    Materia.update(req.body, {
-        where: { id: id }
-    })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "User was updated successfully."
-                });
+    Materia.findOne({ where: condition })
+        .then(data => {
+            if (data) {
+                res.send(data);
             } else {
-                res.send({
-                    message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`
+                res.status(404).send({
+                    message: "Materia no encontrado con nombre " + nombre
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating User with id=" + id
+                message: err.message || "Error ocurrido al obtener Materia."
             });
         });
+};
+
+// Update a Tutorial by the id in the request
+exports.update = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    // Creamos un objeto vacío para acumular los cambios
+    const cambios = {};
+
+    // Si viene un nuevo nombre de materia, buscarla y asignar su id
+    if (req.body.nombre_carrera) {
+      const carrera = await Carrera.findOne({
+        where: { nombre: req.body.nombre_carrera },
+        attributes: ["id"]
+      });
+      
+      if (!carrera) {
+        return res.status(404).json({ message: "Carrera no encontrada." });
+      }
+      cambios.id_carrera = carrera.id;
+    }
+
+
+    // Otros campos directos (solo si vienen en req.body)
+    if (req.body.nombre !== undefined) cambios.nombre = req.body.nombre;
+    if (req.body.creditos !== undefined) cambios.creditos = req.body.creditos;
+    if (req.body.Semestre !== undefined) cambios.Semestre = req.body.Semestre;
+    if (req.body.Obligacion !== undefined) cambios.Obligacion = req.body.Obligacion;
+
+    // Si no hay nada para actualizar, devolvemos error
+    if (Object.keys(cambios).length === 0) {
+      return res.status(400).json({ message: "No se enviaron campos para actualizar." });
+    }
+
+    // Ejecutar actualización
+    const [updated] = await Materia.update(cambios, { where: { id } });
+
+    if (updated === 1) {
+      const materiaActualizado = await Materia.findByPk(id, {
+        include: [
+          { model: Carrera, attributes: ["id", "nombre"] }
+        ]
+      });
+
+      return res.send({
+        message: "Materia actualizado correctamente.",
+        materia: materiaActualizado
+      });
+    } else {
+      return res.status(404).json({ message: `No se encontró materia con id=${id}.` });
+    }
+
+  } catch (err) {
+    res.status(500).send({
+      message: "Error al actualizar materia con id=" + req.params.id,
+      error: err.message
+    });
+  }
 };
 
 // Delete a Client with the specified id in the request

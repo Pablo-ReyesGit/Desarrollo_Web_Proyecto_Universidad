@@ -27,7 +27,7 @@ exports.findAll = (req, res) => {
     const nombre = req.query.nombre;
     var condition = nombre ? { nombre: { [Op.iLike]: `%${nombre}%` } } : null;
 
-    Carrera.findAll({ where: condition })
+    Usuario.findAll({ where: condition })
         .then(data => {
             res.send(data);
         })
