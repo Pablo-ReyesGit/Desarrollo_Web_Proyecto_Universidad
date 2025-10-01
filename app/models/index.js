@@ -47,6 +47,12 @@ db.docentes = require("./docente.model.js")(sequelize, Sequelize);
   console.error("❌ Error al cargar modelo 'docente':", err.message);
 }
 
+try {
+db.administradores = require("./administrador.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'administrador' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'administrador':", err.message);
+}
 
 // Aquí puedes seguir importando otros modelos de forma similar
 // Ejemplo: db.productos = require("./producto.model.js")(sequelize, Sequelize);
