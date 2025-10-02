@@ -1,127 +1,96 @@
 module.exports = app => {
-    const curso = require("../controllers/curso.controller.js");
+    const curso = require("../controllers/curso_inscripcion.controller.js");
     var router = require("express").Router();
     // Create a new Client
 /**
  * @swagger
- * /api/curso/create:
+ * /api/inscripcion/create:
  *   post:
- *     summary: Crea un nuevo curso
- *     description: Inserta un nuevo curso en la base de datos.
- *     tags:
- *       - Curso
+ *     summary: Crear una nueva inscripción a curso
+ *     tags: [Inscripciones]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - id_materia
  *             properties:
+ *               nombre_materia:
+ *                 type: string
+ *                 example: "Matemática I"
  *               periodo:
  *                 type: string
  *                 example: "2025-1"
- *               seccion:
+ *               carnet_estudiante:
  *                 type: string
- *                 example: "A"
- *               cupo_maximo:
- *                 type: integer
- *                 example: 40
- *               carnet_docente:
- *                 type: string
- *                 example: "D-25-2025"
- *               nombre_materia:
- *                 type: string
- *                 example: "algebra lineal"
+ *                 example: "E2025001"
+ *               estado:
+ *                 type: boolean
+ *                 example: "true"
  *     responses:
- *       200:
- *         description: Curso creado exitosamente
+ *       201:
+ *         description: Inscripción creada correctamente
  *       400:
- *         description: Datos incompletos
- *       500:
- *         description: Error en el servidor
+ *         description: Faltan campos requeridos
+ *       404:
+ *         description: Estudiante o curso no encontrado
  */
 
     router.post("/create/", curso.create);
     // Retrieve all Client
 /**
  * @swagger
- * /api/curso:
+ * /api/inscripcion/findAll:
  *   get:
- *     summary: Obtiene todos los cursos
- *     description: Retorna la lista de cursos, opcionalmente filtrados por id_materia.
- *     tags:
- *       - Curso
+ *     summary: Obtener todas las inscripciones
+ *     tags: [Inscripciones]
  *     parameters:
  *       - in: query
- *         name: id_materia
+ *         name: id_curso
  *         schema:
  *           type: string
- *         required: false
- *         description: ID de la materia para filtrar
+ *         description: Filtro por id_curso
  *     responses:
  *       200:
- *         description: Lista de cursos
+ *         description: Lista de inscripciones
  *       500:
- *         description: Error al obtener los cursos
+ *         description: Error al obtener inscripciones
  */
+
     router.get("/", curso.findAll);
-    // Retrieve all published Clients
-/**
- * @swagger
- * /api/curso/status:
- *   get:
- *     summary: Obtiene todos los cursos activos
- *     description: Retorna todos los cursos con status = true
- *     tags:
- *       - Curso
- *     responses:
- *       200:
- *         description: Lista de cursos activos
- *       500:
- *         description: Error en el servidor
- */
-    router.get("/status", curso.findAllStatus);
     // Retrieve a single Client with id
 /**
  * @swagger
- * /api/curso/{id}:
+ * /api/inscripcion/findOne{id}:
  *   get:
- *     summary: Obtiene un curso por ID
- *     tags:
- *       - Curso
+ *     summary: Obtener una inscripción por id
+ *     tags: [Inscripciones]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID del curso
  *     responses:
  *       200:
- *         description: Curso encontrado
+ *         description: Inscripción encontrada
  *       404:
- *         description: Curso no encontrado
- *       500:
- *         description: Error en el servidor
+ *         description: No encontrada
  */
     router.get("/:id", curso.findOne);
     // Update a Client with id
 /**
  * @swagger
- * /api/curso/update/{id}:
+ * /api/inscripciones/update{id}:
  *   put:
- *     summary: Actualiza un curso por ID
- *     tags:
- *       - Curso
+ *     summary: Actualizar inscripción de curso
+ *     tags: [Inscripciones]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID del curso
  *     requestBody:
  *       required: true
  *       content:
@@ -129,70 +98,46 @@ module.exports = app => {
  *           schema:
  *             type: object
  *             properties:
- *               periodo:
- *                 type: string
- *                 example: "2025-2"
- *               seccion:
- *                 type: string
- *                 example: "B"
- *               cupo_maximo:
- *                 type: integer
- *                 example: 35
- *               carnet_docente:
- *                 type: string
- *                 example: "E-2025-1"
  *               nombre_materia:
  *                 type: string
- *                 example: "Algebra Lineal"
+ *               periodo:
+ *                 type: string
+ *               carnet_estudiante:
+ *                 type: string
+ *               estado:
+ *                 type: string
  *     responses:
  *       200:
- *         description: Curso actualizado exitosamente
+ *         description: Inscripción actualizada correctamente
+ *       400:
+ *         description: No se enviaron campos para actualizar
  *       404:
- *         description: Curso no encontrado
- *       500:
- *         description: Error al actualizar
+ *         description: No se encontró la inscripción
  */
     router.put("/update/:id", curso.update);
     // Delete a Client with id df
 /**
  * @swagger
- * /api/curso/delete/{id}:
+ * /api/inscripciones/delete{id}:
  *   delete:
- *     summary: Elimina un curso por ID
- *     tags:
- *       - Curso
+ *     summary: Eliminar una inscripción por id
+ *     tags: [Inscripciones]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID del curso
  *     responses:
  *       200:
- *         description: Curso eliminado exitosamente
+ *         description: Inscripción eliminada correctamente
  *       404:
- *         description: Curso no encontrado
- *       500:
- *         description: Error al eliminar
+ *         description: No encontrada
  */
+
     router.delete("/delete/:id", curso.delete);
     // Delete all Cliente
-/**
- * @swagger
- * /api/curso/delete:
- *   delete:
- *     summary: Elimina todos los cursos
- *     tags:
- *       - Curso
- *     responses:
- *       200:
- *         description: Todos los cursos fueron eliminados
- *       500:
- *         description: Error en el servidor
- */
-    router.delete("/delete/", curso.deleteAll);
     // Podemos utilizar como una ocpion app.use("EndPoint",router" para simplicar el URI
     // Ej.  http://localhost:Puerto/api/cliente/
-    app.use("/api/curso", router);
+    app.use("/api/inscripcion", router);
 };
