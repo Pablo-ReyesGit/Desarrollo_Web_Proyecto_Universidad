@@ -25,8 +25,9 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",
-<<<<<<< HEAD
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "repository": {
     "type": "git",
@@ -36,11 +37,4 @@
     "url": "https://github.com/Pablo-ReyesGit/Desarrollo_Web_Proyecto_Universidad/issues"
   },
   "homepage": "https://github.com/Pablo-ReyesGit/Desarrollo_Web_Proyecto_Universidad#readme"
-=======
-    "sequelize": "^6.37.7",
-    "swagger": "^0.7.5",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
-  }
->>>>>>> 0827e69c3efaf3ffd610aa861ea31078e38edb58
 }
