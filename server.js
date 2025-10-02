@@ -50,14 +50,13 @@ try {
 }
 
 try {
-<<<<<<< HEAD
   require("./app/routes/administrador.routes.js")(app);
   console.log("✅ administrador.routes.js cargado correctamente");
 } catch (err) {
   console.error("❌ Error al cargar administrador.routes.js:", err.message);
 }
 
-=======
+try {
   require("./app/routes/carrera.routes.js")(app);
   console.log("✅ carrera.routes.js cargado correctamente");
 } catch (err) {
@@ -77,9 +76,17 @@ try {
 } catch (err) {
   console.error("❌ Error al cargar curso.routes.js:", err.message);
 }
->>>>>>> 0827e69c3efaf3ffd610aa861ea31078e38edb58
+
+try {
+  require("./app/routes/tipo_notificacion.routes.js")(app);
+  console.log("✅ tipo_notificacion.routes.js cargado correctamente");
+} catch (err) {
+  console.error("❌ Error al cargar tipo_notificacion.routes.js:", err.message);
+}
+
+
 // set port, listen for requests
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor iniciado correctamente en el puerto ${PORT}.`);
-}); 
+  console.log(`🚀 Servidor iniciado correctamente en el puerto ${PORT}.`);
+});

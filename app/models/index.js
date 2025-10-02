@@ -31,53 +31,56 @@ db.Sequelize = Sequelize;
 // Asignamos la instancia de conexión Sequelize con los parámetros definidos
 db.sequelize = sequelize;
 
-// Importamos el modelo de cliente desde la carpeta 'models' y lo registramos en el objeto `db`
-// Le pasamos la instancia de conexión `sequelize` y la clase `Sequelize` como argumentos
+// Importamos modelos y los registramos en el objeto `db`
 try {
-db.usuarios = require("./usuario.model.js")(sequelize, Sequelize);
+  db.usuarios = require("./usuario.model.js")(sequelize, Sequelize);
   console.log("✅ Modelo 'usuario' cargado correctamente.");
 } catch (err) {
   console.error("❌ Error al cargar modelo 'usuario':", err.message);
 }
 
 try {
-db.docentes = require("./docente.model.js")(sequelize, Sequelize);
+  db.docentes = require("./docente.model.js")(sequelize, Sequelize);
   console.log("✅ Modelo 'docente' cargado correctamente.");
 } catch (err) {
   console.error("❌ Error al cargar modelo 'docente':", err.message);
 }
 
 try {
-<<<<<<< HEAD
-db.administradores = require("./administrador.model.js")(sequelize, Sequelize);
+  db.administradores = require("./administrador.model.js")(sequelize, Sequelize);
   console.log("✅ Modelo 'administrador' cargado correctamente.");
 } catch (err) {
   console.error("❌ Error al cargar modelo 'administrador':", err.message);
 }
-=======
-db.carreras = require("./carrera.model.js")(sequelize, Sequelize);
+
+try {
+  db.carreras = require("./carrera.model.js")(sequelize, Sequelize);
   console.log("✅ Modelo 'carrera' cargado correctamente.");
 } catch (err) {
   console.error("❌ Error al cargar modelo 'carrera':", err.message);
 }
 
 try {
-db.materias = require("./materia.model.js")(sequelize, Sequelize);
+  db.materias = require("./materia.model.js")(sequelize, Sequelize);
   console.log("✅ Modelo 'materia' cargado correctamente.");
 } catch (err) {
   console.error("❌ Error al cargar modelo 'materia':", err.message);
 }
 
 try {
-db.cursos = require("./curso.model.js")(sequelize, Sequelize);
+  db.cursos = require("./curso.model.js")(sequelize, Sequelize);
   console.log("✅ Modelo 'curso' cargado correctamente.");
 } catch (err) {
   console.error("❌ Error al cargar modelo 'curso':", err.message);
 }
+//db.notificacionpago = require("./notificacion_pago.model.js")(sequelize, Sequelize);
 
-
-
->>>>>>> 0827e69c3efaf3ffd610aa861ea31078e38edb58
+try {
+  db.tipo_notificacion = require("./tipo_notificacion.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'tipo_notificacion' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'tipo_notificacion':", err.message);
+}
 
 // Aquí puedes seguir importando otros modelos de forma similar
 // Ejemplo: db.productos = require("./producto.model.js")(sequelize, Sequelize);
