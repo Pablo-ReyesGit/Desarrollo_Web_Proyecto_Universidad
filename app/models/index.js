@@ -109,6 +109,13 @@ try {
   console.error("❌ Error al cargar modelo 'horario':", err.message);
 }
 
+try {
+  db.notas = require("./notas.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'notas' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'notas':", err.message);
+}
+
 // =======================
 // Exportamos db
 // =======================

@@ -11,11 +11,11 @@ exports.create = async (req, res) => {
   try {
     console.log('[Cursos.create] body:', JSON.stringify(req.body));
 
-    const nombre_curso = req.body?.nombre_curso?.toString().trim();
+    const nombre_materia = req.body?.nombre_materia?.toString().trim();
     const carnet_estudiante = req.body?.carnet_estudiante?.toString().trim();
 
     const missing = [];
-    if (!nombre_curso) missing.push('nombre_curso');
+    if (!nombre_materia) missing.push('nombre_materia');
     if (!carnet_estudiante) missing.push('carnet_estudiante');
 
     if (missing.length) {
@@ -23,7 +23,7 @@ exports.create = async (req, res) => {
       return res.status(400).json({
         message: `Faltan campos requeridos: ${missing.join(', ')}`,
         details: {
-          nombre_curso: nombre_curso || 'no enviado',
+          nombre_materia: nombre_curso || 'no enviado',
           carnet_estudiante: carnet_estudiante || 'no enviado'
         }
       });
@@ -80,7 +80,7 @@ exports.findAll = (req, res) => {
     const id_curso = req.query.id_curso;
     var condition = id_curso ? { id_curso: { [Op.iLike]: `%${id_curso}%` } } : null;
 
-    Curso_.findAll({ where: condition })
+    Nota.findAll({ where: condition })
         .then(data => {
             res.send(data);
         })
