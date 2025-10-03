@@ -152,7 +152,7 @@ module.exports = app => {
    *       500:
    *         description: Error en el servidor
    */
-  router.get("/:id", docente.getByCarnet);
+  router.get("/:carnet", docente.getByCarnet);
 
   // Update Docente
   /**
@@ -205,21 +205,5 @@ module.exports = app => {
    *         description: Error en el servidor
    */
   router.delete("/delete/:carnet", docente.delete);
-
-  // Delete todos los docentes
-  /**
-   * @swagger
-   * /api/docente/delete/:
-   *   delete:
-   *     summary: Eliminar todos los docentes
-   *     tags: [Docente]
-   *     responses:
-   *       200:
-   *         description: Docentes eliminados
-   *       500:
-   *         description: Error en el servidor
-   */
-  router.delete("/delete/", docente.deleteAll);
-
   app.use("/api/docente", router);
 };

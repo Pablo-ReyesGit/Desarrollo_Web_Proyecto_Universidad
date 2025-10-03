@@ -1,5 +1,6 @@
 // importamos db los modelos en este caso si tenemos uno o mas, se puede referenciar db."nombreModelo".   
 const db = require("../models");
+const sequelize = db.sequelize;  
 const Docente = db.docentes;  // usamos el modelo docente
 const Op = db.Sequelize.Op;
 const Carrera = db.carreras;
@@ -7,7 +8,11 @@ const Carrera = db.carreras;
 // Create and Save a new Docente
 exports.create = async (req, res) => {
     try {
-        if (!req.body.nombre) {
+        if (!req.body.nombre || !req.body.carnet 
+            || !req.body.DPI || !req.body.id_usuario 
+            || !req.body.id_carrera || !req.body.apellido
+            ||!req.body.fechaNacimiento || !req.body.genero || !req.body.sueldo
+        ) {
             return res.status(400).send({ message: "Content can not be empty!" });
         }
 
@@ -62,7 +67,6 @@ exports.findAll = (req, res) => {
 exports.getByCarnet = async (req, res) => {
 
     const carnet = req.params.carnet;
-
     if (!carnet) {
         console.warn("No se proporcionó carnet en la consulta");
         return res.status(400).send({
@@ -76,7 +80,7 @@ exports.getByCarnet = async (req, res) => {
         { [Op.like]: `%${carnet.toUpperCase()}%` }
     );
 
-    Estudiante.findOne({ where: condition })
+    Docente.findOne({ where: condition })
         .then(data => {
             if (data) {
                 res.send(data);
@@ -215,27 +219,11 @@ exports.delete = (req, res) => {
         });
 };
 
-// Delete all Docentes from the database.
-exports.deleteAll = (req, res) => {
-    Docente.destroy({
-        where: {},
-        truncate: false
-    })
-        .then(nums => {
-            res.send({ message: `${nums} Docentes were deleted successfully!` });
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while removing all Docentes."
-            });
-        });
-};
 
 // find all Docentes activos, basado en el atributo status (si existiera en tu modelo de docente) 
 // Nota: como el modelo Docente no tiene "status", puedes adaptar este endpoint si luego lo agregas.
 exports.findAllStatus = (req, res) => {
-    Docente.findAll({ where: { status: true } })
+    Docente.findAll({ where: { status_carrera: true } })
         .then(data => {
             res.send(data);
         })
