@@ -129,6 +129,7 @@ module.exports = app => {
  *           schema:
  *             type: object
  *             properties:
+ * 
  *               tipo_notificacion:
  *                 type: string
  *                 enum: [TAREA_ASIGNADA, TAREA_CALIFICADA, RECORDATORIO_ENTREGA, AVISO_GENERAL]
