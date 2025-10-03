@@ -4,24 +4,25 @@ const Op = db.Sequelize.Op;
 
 // Crear un nuevo libro
 exports.create = (req, res) => {
-    if (!req.body.id_admin) {
-        return res.status(400).send({ message: "El ID del administrador no puede estar vacío." });
+    if (!req.body.nombre) {
+        return res.status(400).send({ 
+            message: "El nombre del administrador no puede estar vacío." 
+        });
     }
 
     const nuevoAdministrador = {
-        id_admin: req.body.id_admin,
-        autor: req.body.autor,
         nombre: req.body.nombre,
         apellido: req.body.apellido,
         telefono: req.body.telefono,
         direccion: req.body.direccion,
-        status: req.body.status ? req.body.status : false
     };
 
     Administrador.create(nuevoAdministrador)
         .then(data => res.send(data))
         .catch(err => {
-            res.status(500).send({ message: err.message || "Error al crear el Administrador." });
+            res.status(500).send({ 
+                message: err.message || "Error al crear el Administrador." 
+            });
         });
 };
 

@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
+const swaggerUI = require("swagger-ui-express");
 
 const app = express();
 
@@ -18,8 +19,12 @@ app.use(bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const swaggerSpec = require("./app/config/swagger.config");
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+
 const db = require("./app/models");
 db.sequelize.sync();
+
 // // drop the table if it already exists
 // db.sequelize.sync({ force: true }).then(() => {
 //   console.log("Drop and re-sync db.");
@@ -51,8 +56,65 @@ try {
   console.error("❌ Error al cargar administrador.routes.js:", err.message);
 }
 
+try{
+  require("./app/routes/carrera.routes.js")(app);
+  console.log("✅ carrera.routes.js cargado correctamente");
+} catch (err) {
+  console.error("❌ Error al cargar carrera.routes.js:", err.message);
+}
+
+try {
+  require("./app/routes/materia.routes.js")(app);
+  console.log("✅ materia.routes.js cargado correctamente");
+} catch (err) {
+  console.error("❌ Error al cargar materia.routes.js:", err.message);
+}
+
+try {
+  require("./app/routes/curso.routes.js")(app);
+  console.log("✅ curso.routes.js cargado correctamente");
+} catch (err) {
+  console.error("❌ Error al cargar curso.routes.js:", err.message);
+}
+
+try {
+  require("./app/routes/estudiantecarrera.routes.js")(app);
+  console.log("✅ estudiantecarrera.routes.js cargado correctamente");
+} catch (err) {
+  console.error("❌ Error al cargar estudiantecarrera.routes.js:", err.message);
+}
+
+try {
+  require("./app/routes/estudiante.routes.js")(app);
+  console.log("✅ estudiante.routes.js cargado correctamente");
+} catch (err) {
+  console.error("❌ Error al cargar estudiante.routes.js:", err.message);
+}
+
+try {
+  require("./app/routes/curso_inscripcion.routes.js")(app);
+  console.log("✅ curso_inscripcion.routes.js cargado correctamente");
+} catch (err) {
+  console.error("❌ Error al cargar curso_inscripcion.routes.js:", err.message);
+}
+
+try {
+  require("./app/routes/horario.routes.js")(app);
+  console.log("✅ horario.routes.js cargado correctamente");
+} catch (err) {
+  console.error("❌ Error al cargar horario.routes.js:", err.message);
+}
+
+try {
+  require("./app/routes/notas.routes.js")(app);
+  console.log("✅ notas.routes.js cargado correctamente");
+} catch (err) {
+  console.error("❌ Error al cargar notas.routes.js:", err.message);
+}
+
+
 // set port, listen for requests
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor iniciado correctamente en el puerto ${PORT}.`);
-}); 
+  console.log(`🚀 Servidor iniciado correctamente en el puerto ${PORT}.`);
+});
