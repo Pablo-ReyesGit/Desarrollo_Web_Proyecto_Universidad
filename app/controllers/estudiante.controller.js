@@ -1,4 +1,5 @@
 const db = require("../models");
+<<<<<<< HEAD
 const Estudiante = db.estudiantes;
 const Op = db.Sequelize.Op;
 
@@ -51,6 +52,38 @@ exports.create = async (req, res) => {
             message: err.message || "Ocurrió un error al crear el Estudiante."
         });
     }
+=======
+const Estudiante = db.estudiantes;   // 👈 tu modelo se llama "estudiante"
+const Op = db.Sequelize.Op;
+
+// Create and Save a new Estudiante
+exports.create = (req, res) => {
+    if (!req.body.fullname) {
+        res.status(400).send({
+            message: "El nombre no puede estar vacío!"
+        });
+        return;
+    }
+
+    const estudiante = {
+        fullname: req.body.fullname,
+        carnet: req.body.carnet,
+        fechaNacimiento: req.body.fechaNacimiento,
+        dpi: req.body.dpi,
+        ingreso: req.body.ingreso,
+        status: req.body.status ? req.body.status : false
+    };
+
+    Estudiante.create(estudiante)
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Ocurrió un error al crear el Estudiante."
+            });
+        });
+>>>>>>> 691eba747accc67ed4b28cf6207416fe1ce6fdfd
 };
 
 // Retrieve all Estudiantes
@@ -59,7 +92,13 @@ exports.findAll = (req, res) => {
     var condition = fullname ? { fullname: { [Op.iLike]: `%${fullname}%` } } : null;
 
     Estudiante.findAll({ where: condition })
+<<<<<<< HEAD
         .then(data => res.send(data))
+=======
+        .then(data => {
+            res.send(data);
+        })
+>>>>>>> 691eba747accc67ed4b28cf6207416fe1ce6fdfd
         .catch(err => {
             res.status(500).send({
                 message: err.message || "Ocurrió un error al obtener los Estudiantes."
@@ -73,11 +112,26 @@ exports.findOne = (req, res) => {
 
     Estudiante.findByPk(id)
         .then(data => {
+<<<<<<< HEAD
             if (data) res.send(data);
             else res.status(404).send({ message: `No se encontró Estudiante con id=${id}` });
         })
         .catch(err => {
             res.status(500).send({ message: "Error al obtener Estudiante con id=" + id });
+=======
+            if (data) {
+                res.send(data);
+            } else {
+                res.status(404).send({
+                    message: `No se encontró Estudiante con id=${id}`
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error al obtener Estudiante con id=" + id
+            });
+>>>>>>> 691eba747accc67ed4b28cf6207416fe1ce6fdfd
         });
 };
 
@@ -85,6 +139,7 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id;
 
+<<<<<<< HEAD
     Estudiante.update(req.body, { where: { id: id } })
         .then(num => {
             if (num == 1) {
@@ -95,6 +150,26 @@ exports.update = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({ message: "Error al actualizar Estudiante con id=" + id });
+=======
+    Estudiante.update(req.body, {
+        where: { id: id }
+    })
+        .then(num => {
+            if (num == 1) {
+                res.send({
+                    message: "Estudiante actualizado correctamente."
+                });
+            } else {
+                res.send({
+                    message: `No se pudo actualizar Estudiante con id=${id}. Tal vez no existe o req.body está vacío!`
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error al actualizar Estudiante con id=" + id
+            });
+>>>>>>> 691eba747accc67ed4b28cf6207416fe1ce6fdfd
         });
 };
 
@@ -102,6 +177,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const id = req.params.id;
 
+<<<<<<< HEAD
     Estudiante.destroy({ where: { id: id } })
         .then(num => {
             if (num == 1) res.send({ message: "Estudiante eliminado correctamente!" });
@@ -109,21 +185,52 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({ message: "No se pudo eliminar Estudiante con id=" + id });
+=======
+    Estudiante.destroy({
+        where: { id: id }
+    })
+        .then(num => {
+            if (num == 1) {
+                res.send({ message: "Estudiante eliminado correctamente!" });
+            } else {
+                res.send({ message: `No se pudo eliminar Estudiante con id=${id}. No encontrado!` });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "No se pudo eliminar Estudiante con id=" + id
+            });
+>>>>>>> 691eba747accc67ed4b28cf6207416fe1ce6fdfd
         });
 };
 
 // Delete all Estudiantes
 exports.deleteAll = (req, res) => {
+<<<<<<< HEAD
     Estudiante.destroy({ where: {}, truncate: false })
         .then(nums => res.send({ message: `${nums} Estudiantes fueron eliminados correctamente!` }))
         .catch(err => {
             res.status(500).send({ message: err.message || "Ocurrió un error al eliminar todos los Estudiantes." });
+=======
+    Estudiante.destroy({
+        where: {},
+        truncate: false
+    })
+        .then(nums => {
+            res.send({ message: `${nums} Estudiantes fueron eliminados correctamente!` });
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Ocurrió un error al eliminar todos los Estudiantes."
+            });
+>>>>>>> 691eba747accc67ed4b28cf6207416fe1ce6fdfd
         });
 };
 
 // Find all active Estudiantes (status = true)
 exports.findAllStatus = (req, res) => {
     Estudiante.findAll({ where: { status: true } })
+<<<<<<< HEAD
         .then(data => res.send(data))
         .catch(err => {
             res.status(500).send({ message: err.message || "Ocurrió un error al obtener Estudiantes activos." });
@@ -132,3 +239,14 @@ exports.findAllStatus = (req, res) => {
 
 
 
+=======
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Ocurrió un error al obtener Estudiantes activos."
+            });
+        });
+};
+>>>>>>> 691eba747accc67ed4b28cf6207416fe1ce6fdfd

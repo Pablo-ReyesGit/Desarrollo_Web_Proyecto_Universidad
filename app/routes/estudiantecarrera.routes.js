@@ -4,7 +4,7 @@ module.exports = app => {
 
     /**
  * @swagger
- * /api/estudianteCarrera/create:
+ * /api/estudianteCarrera:
  *   post:
  *     summary: Crear un registro de estudiante-carrera
  *     description: Relaciona un estudiante con una carrera específica.
@@ -81,7 +81,7 @@ module.exports = app => {
 
 /**
  * @swagger
- * /api/estudianteCarrera/update/{id}:
+ * /api/estudianteCarrera/{id}:
  *   put:
  *     summary: Actualizar un registro estudiante-carrera
  *     tags: [EstudianteCarrera]
@@ -128,7 +128,7 @@ module.exports = app => {
 
 /**
  * @swagger
- * /api/estudianteCarrera/delete/{id}:
+ * /api/estudianteCarrera/{id}:
  *   delete:
  *     summary: Eliminar un registro estudiante-carrera por ID
  *     tags: [EstudianteCarrera]

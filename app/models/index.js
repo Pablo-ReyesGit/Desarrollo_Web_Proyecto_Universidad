@@ -96,6 +96,41 @@ try {
   console.error("❌ Error al cargar modelo 'tipo_notificacion':", err.message);
 }
 
+try {
+  db.estudiantes = require("./estudiante.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'estudiante' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'estudiante':", err.message);
+}
+
+try {
+<<<<<<< HEAD
+  db.horarios = require("./horario.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'horario' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'horario':", err.message);
+}
+
+try {
+  db.notas = require("./notas.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'notas' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'notas':", err.message);
+}
+
+=======
+  db.estudiante_carreras = require("./estudiantecarrera.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'estudiante_carrera' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'estudiante_carrera':", err.message);
+}
+
+try {
+  db.inscripciones = require("./curso_inscripcion.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'inscripcion' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'inscripcion':", err.message);
+}
 
 try {
   db.horarios = require("./horario.model.js")(sequelize, Sequelize);
@@ -111,6 +146,7 @@ try {
   console.error("❌ Error al cargar modelo 'notas':", err.message);
 }
 
+>>>>>>> 691eba747accc67ed4b28cf6207416fe1ce6fdfd
 // =======================
 // Exportamos db
 // =======================
