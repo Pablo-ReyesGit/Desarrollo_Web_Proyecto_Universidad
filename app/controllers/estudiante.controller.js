@@ -114,21 +114,7 @@ exports.delete = (req, res) => {
         });
 };
 
-// Delete all Estudiantes
-exports.deleteAll = (req, res) => {
-    Estudiante.destroy({
-        where: {},
-        truncate: false
-    })
-        .then(nums => {
-            res.send({ message: `${nums} Estudiantes fueron eliminados correctamente!` });
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Ocurrió un error al eliminar todos los Estudiantes."
-            });
-        });
-};
+
 
 // Find all active Estudiantes (status = true)
 exports.findAllStatus = (req, res) => {

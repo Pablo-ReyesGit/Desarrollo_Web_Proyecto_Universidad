@@ -153,21 +153,6 @@ module.exports = app => {
  */
   router.delete("/:id", estudiantes.delete);
 
-  // Eliminar todos los estudiantes
-
-/**
- * @swagger
- * /api/estudiantes:
- *   delete:
- *     summary: Eliminar todos los Estudiantes
- *     tags: [Estudiantes]
- *     responses:
- *       200:
- *         description: Todos los Estudiantes fueron eliminados correctamente.
- *       500:
- *         description: Error al eliminar Estudiantes.
- */
-  router.delete("/", estudiantes.deleteAll);
 
   // Obtener todos los estudiantes activos (status = true)
   /**
