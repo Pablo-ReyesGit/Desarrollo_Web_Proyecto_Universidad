@@ -56,11 +56,7 @@ try {
   console.error("❌ Error al cargar administrador.routes.js:", err.message);
 }
 
-<<<<<<< HEAD
-try {
-=======
 try{
->>>>>>> 691eba747accc67ed4b28cf6207416fe1ce6fdfd
   require("./app/routes/carrera.routes.js")(app);
   console.log("✅ carrera.routes.js cargado correctamente");
 } catch (err) {
@@ -82,16 +78,6 @@ try {
 }
 
 try {
-<<<<<<< HEAD
-  require("./app/routes/tipo_notificacion.routes.js")(app);
-  console.log("✅ tipo_notificacion.routes.js cargado correctamente");
-} catch (err) {
-  console.error("❌ Error al cargar tipo_notificacion.routes.js:", err.message);
-}
-
-try {
-=======
->>>>>>> 691eba747accc67ed4b28cf6207416fe1ce6fdfd
   require("./app/routes/estudiantecarrera.routes.js")(app);
   console.log("✅ estudiantecarrera.routes.js cargado correctamente");
 } catch (err) {

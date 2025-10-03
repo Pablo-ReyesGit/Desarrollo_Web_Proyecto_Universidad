@@ -104,21 +104,6 @@ try {
 }
 
 try {
-<<<<<<< HEAD
-  db.horarios = require("./horario.model.js")(sequelize, Sequelize);
-  console.log("✅ Modelo 'horario' cargado correctamente.");
-} catch (err) {
-  console.error("❌ Error al cargar modelo 'horario':", err.message);
-}
-
-try {
-  db.notas = require("./notas.model.js")(sequelize, Sequelize);
-  console.log("✅ Modelo 'notas' cargado correctamente.");
-} catch (err) {
-  console.error("❌ Error al cargar modelo 'notas':", err.message);
-}
-
-=======
   db.estudiante_carreras = require("./estudiantecarrera.model.js")(sequelize, Sequelize);
   console.log("✅ Modelo 'estudiante_carrera' cargado correctamente.");
 } catch (err) {
@@ -146,7 +131,6 @@ try {
   console.error("❌ Error al cargar modelo 'notas':", err.message);
 }
 
->>>>>>> 691eba747accc67ed4b28cf6207416fe1ce6fdfd
 // =======================
 // Exportamos db
 // =======================
