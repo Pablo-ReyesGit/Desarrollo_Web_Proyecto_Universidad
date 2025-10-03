@@ -186,7 +186,6 @@ module.exports = app => {
    *       500:
    *         description: Error en el servidor
    */
-  router.delete("/delete/", materia.deleteAll);
 
   app.use("/api/materia", router);
 };

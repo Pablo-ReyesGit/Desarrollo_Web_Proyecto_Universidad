@@ -171,22 +171,6 @@ exports.delete = (req, res) => {
         });
 };
 
-// Delete all Clients from the database.
-exports.deleteAll = (req, res) => {
-    Materia.destroy({
-        where: {},
-        truncate: false
-    })
-        .then(nums => {
-            res.send({ message: `${nums} User were deleted successfully!` });
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while removing all users."
-            });
-        });
-};
 
 // find all active Client, basado en el atributo status vamos a buscar que solo los clientes activos
 exports.findAllStatus = (req, res) => {
