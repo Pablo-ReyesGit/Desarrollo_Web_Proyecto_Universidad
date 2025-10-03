@@ -1,7 +1,7 @@
-// Cargamos el archivo de configuración que contiene los datos de conexión a la base de datos
+// =======================
+// Configuración de Sequelize
+// =======================
 const dbConfig = require("../config/db.config.js");
-
-// Importamos Sequelize, el ORM que nos permite trabajar con PostgreSQL como objetos JS
 const Sequelize = require("sequelize");
 
 // Creamos una instancia de Sequelize con los parámetros de conexión, incluyendo SSL para NeonDB
@@ -10,7 +10,7 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   dialect: dbConfig.dialect,
   dialectOptions: {
     ssl: {
-      require: true, // 👈 corregido: antes decía "requere"
+      require: true,
       rejectUnauthorized: false
     }
   },
@@ -22,16 +22,16 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   }
 });
 
-// Creamos un objeto `db` que exportaremos para acceder a Sequelize y los modelos desde otras partes del proyecto
+// =======================
+// Inicializamos el objeto DB
+// =======================
 const db = {};
-
-// Asignamos la clase Sequelize al objeto `db`, útil si se requiere usar métodos del ORM manualmente
 db.Sequelize = Sequelize;
-
-// Asignamos la instancia de conexión Sequelize con los parámetros definidos
 db.sequelize = sequelize;
 
-// Importamos modelos y los registramos en el objeto `db`
+// =======================
+// Importamos los modelos
+// =======================
 try {
   db.usuarios = require("./usuario.model.js")(sequelize, Sequelize);
   console.log("✅ Modelo 'usuario' cargado correctamente.");
@@ -47,14 +47,21 @@ try {
 }
 
 try {
-  db.administradores = require("./administrador.model.js")(sequelize, Sequelize);
+  db.carreras = require("./carrera.model.js")(sequelize, Sequelize);
+    console.log("✅ Modelo 'carrera' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'carrera':", err.message);
+}
+
+  try{
+db.administradores = require("./administrador.model.js")(sequelize, Sequelize);
   console.log("✅ Modelo 'administrador' cargado correctamente.");
 } catch (err) {
   console.error("❌ Error al cargar modelo 'administrador':", err.message);
 }
 
-try {
-  db.carreras = require("./carrera.model.js")(sequelize, Sequelize);
+try{
+db.carreras = require("./carrera.model.js")(sequelize, Sequelize);
   console.log("✅ Modelo 'carrera' cargado correctamente.");
 } catch (err) {
   console.error("❌ Error al cargar modelo 'carrera':", err.message);
@@ -76,14 +83,35 @@ try {
 //db.notificacionpago = require("./notificacion_pago.model.js")(sequelize, Sequelize);
 
 try {
+  db.estudiantes = require("./estudiante.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'estudiante' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'estudiante':", err.message);
+}
+
+try {
   db.tipo_notificacion = require("./tipo_notificacion.model.js")(sequelize, Sequelize);
   console.log("✅ Modelo 'tipo_notificacion' cargado correctamente.");
 } catch (err) {
   console.error("❌ Error al cargar modelo 'tipo_notificacion':", err.message);
 }
 
-// Aquí puedes seguir importando otros modelos de forma similar
-// Ejemplo: db.productos = require("./producto.model.js")(sequelize, Sequelize);
 
-// Exportamos el objeto `db` para que pueda ser usado por otros módulos (por ejemplo, en el `server.js`)
+try {
+  db.horarios = require("./horario.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'horario' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'horario':", err.message);
+}
+
+try {
+  db.notas = require("./notas.model.js")(sequelize, Sequelize);
+  console.log("✅ Modelo 'notas' cargado correctamente.");
+} catch (err) {
+  console.error("❌ Error al cargar modelo 'notas':", err.message);
+}
+
+// =======================
+// Exportamos db
+// =======================
 module.exports = db;
