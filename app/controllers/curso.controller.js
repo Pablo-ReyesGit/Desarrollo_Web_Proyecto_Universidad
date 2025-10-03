@@ -82,13 +82,18 @@ exports.findAll = (req, res) => {
 
 // Find a single Tutorial with an id
 exports.findOne = async (req, res) => {
+    if(!req.params.id_materia){
+        return res.status(400).send({ message: "El id_materia es requerido" });
+    }
     try {
-        const curso = await Curso.findOne({ where: { id_materia: req.body.id_materia } });
+        const curso = await Curso.findOne({ where: { id_materia: req.params.id_materia } });
         if (!curso) {
-            return res.status(404).send({ message: "Curso no encontrado" });
+            return res.status(404).send({ message: "Curso no encontrado "  });
         }
 
-        res.send({ message: "Curso encontrado " });
+        res
+        .status(200)
+        .send({ curso});
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
@@ -98,7 +103,9 @@ exports.findOne = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const id = req.params.id;
-
+    if(!id){
+      return res.status(400).send({ message: "El id es requerido" });
+    }
     // Creamos un objeto vacío para acumular los cambios
     const cambios = {};
 
@@ -169,18 +176,25 @@ exports.update = async (req, res) => {
 // Delete a Client with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
+    if(!id){
+        return res.status(400).send({ message: "El id es requerido" });
+    }
     // utilizamos el metodo destroy para eliminar el objeto mandamos la condicionante where id = parametro que recibimos 
     Curso.destroy({
         where: { id: id }
     })
         .then(num => {
             if (num == 1) {
-                res.send({
+                res
+                .status(200)
+                .send({
                     message: "User was deleted successfully!"
                 });
             } else {
-                res.send({
-                    message: `Cannot delete User with id=${id}. El usuario no fue encontado!`
+                res
+                .status(404)
+                .send({
+                    message: `Cannot delete User with id=${id}. El usuario no fue encontrado!`
                 });
             }
         })
@@ -191,28 +205,15 @@ exports.delete = (req, res) => {
         });
 };
 
-// Delete all Clients from the database.
-exports.deleteAll = (req, res) => {
-    Curso.destroy({
-        where: {},
-        truncate: false
-    })
-        .then(nums => {
-            res.send({ message: `${nums} User were deleted successfully!` });
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while removing all users."
-            });
-        });
-};
+
 
 // find all active Client, basado en el atributo status vamos a buscar que solo los clientes activos
 exports.findAllStatus = (req, res) => {
     Curso.findAll({ where: { status: true } })
         .then(data => {
-            res.send(data);
+            res
+            .status(200)
+            .send(data);
         })
         .catch(err => {
             res.status(500).send({

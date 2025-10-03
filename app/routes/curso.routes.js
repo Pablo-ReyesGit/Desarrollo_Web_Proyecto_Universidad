@@ -106,7 +106,7 @@ module.exports = app => {
  *       500:
  *         description: Error en el servidor
  */
-    router.get("/:id", curso.findOne);
+    router.get("/:id_materia", curso.findOne);
     // Update a Client with id
 /**
  * @swagger
@@ -177,21 +177,6 @@ module.exports = app => {
  *         description: Error al eliminar
  */
     router.delete("/delete/:id", curso.delete);
-    // Delete all Cliente
-/**
- * @swagger
- * /api/curso/delete:
- *   delete:
- *     summary: Elimina todos los cursos
- *     tags:
- *       - Curso
- *     responses:
- *       200:
- *         description: Todos los cursos fueron eliminados
- *       500:
- *         description: Error en el servidor
- */
-    router.delete("/delete/", curso.deleteAll);
     // Podemos utilizar como una ocpion app.use("EndPoint",router" para simplicar el URI
     // Ej.  http://localhost:Puerto/api/cliente/
     app.use("/api/curso", router);
