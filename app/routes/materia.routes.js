@@ -173,20 +173,5 @@ module.exports = app => {
    */
   router.delete("/delete/:id", materia.delete);
 
-  /**
-   * @swagger
-   * /api/materia/delete:
-   *   delete:
-   *     summary: Elimina todas las materias
-   *     tags:
-   *       - Materia
-   *     responses:
-   *       200:
-   *         description: Todas las materias fueron eliminadas
-   *       500:
-   *         description: Error en el servidor
-   */
-  router.delete("/delete/", materia.deleteAll);
-
   app.use("/api/materia", router);
 };

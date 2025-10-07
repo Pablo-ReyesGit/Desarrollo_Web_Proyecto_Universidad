@@ -61,7 +61,7 @@ module.exports = app => {
     // Retrieve a single Client with id
 /**
  * @swagger
- * /api/inscripcion/findOne{id}:
+ * /api/inscripcion/findOne/{id}:
  *   get:
  *     summary: Obtener una inscripción por id
  *     tags: [Inscripciones]
@@ -81,7 +81,7 @@ module.exports = app => {
     // Update a Client with id
 /**
  * @swagger
- * /api/inscripciones/update{id}:
+ * /api/inscripcion/update/{id}:
  *   put:
  *     summary: Actualizar inscripción de curso
  *     tags: [Inscripciones]
@@ -118,7 +118,7 @@ module.exports = app => {
     // Delete a Client with id df
 /**
  * @swagger
- * /api/inscripciones/delete{id}:
+ * /api/inscripcion/delete{id}:
  *   delete:
  *     summary: Eliminar una inscripción por id
  *     tags: [Inscripciones]

@@ -109,71 +109,95 @@ exports.findOne = async (req, res) => {
 // Update a Tutorial by the id in the request
 exports.update = async (req, res) => {
   try {
+    console.log("👉 Iniciando actualización de Curso_Inscripcion...");
+    console.log("📌 ID recibido en params:", req.params.id);
+    console.log("📥 Datos recibidos en body:", req.body);
+
     const id = req.params.id;
 
-    // Creamos un objeto vacío para acumular los cambios
+    // Objeto acumulador de cambios
     const cambios = {};
 
-    // Si viene un nuevo nombre de materia, buscarla y asignar su id
+    // Si viene un nuevo nombre de materia
     if (req.body.nombre_materia) {
+      console.log("🔎 Buscando materia con nombre:", req.body.nombre_materia);
       const materia = await Materia.findOne({
         where: { nombre: req.body.nombre_materia },
         attributes: ["id"]
       });
 
+      if (!materia) {
+        console.warn("⚠️ Materia no encontrada:", req.body.nombre_materia);
+        return res.status(404).json({ message: "Materia no encontrada." });
+      }
+
+      console.log("✅ Materia encontrada:", materia.id);
+
+      console.log("🔎 Buscando curso con materia:", materia.id, "y periodo:", req.body.periodo);
       const curso = await Curso.findOne({
-        where: { 
-          id_materia: materia.id,
-          periodo: req.body.periodo
-         },
+        where: { id_materia: materia.id, periodo: req.body.periodo },
         attributes: ["id"]
-      })
+      });
+
+      if (!curso) {
+        console.warn("⚠️ Curso no encontrado para la materia y periodo dados.");
+        return res.status(404).json({ message: "Curso no encontrado para la materia y periodo." });
+      }
+
+      console.log("✅ Curso encontrado:", curso.id);
       cambios.id_curso = curso.id;
     }
 
-    // Si viene un carnet de docente, buscarlo y asignar su id
+    // Si viene carnet de estudiante
     if (req.body.carnet_estudiante) {
+      console.log("🔎 Buscando estudiante con carnet:", req.body.carnet_estudiante);
       const estudiante = await Estudiante.findOne({
         where: { carnet: req.body.carnet_estudiante },
         attributes: ["id"]
       });
+
+      if (!estudiante) {
+        console.warn("⚠️ Estudiante no encontrado:", req.body.carnet_estudiante);
+        return res.status(404).json({ message: "Estudiante no encontrado." });
+      }
+
+      console.log("✅ Estudiante encontrado:", estudiante.id);
       cambios.id_estudiante = estudiante.id;
     }
 
-    // Otros campos directos (solo si vienen en req.body)
-    if (req.body.estado !== undefined) cambios.estado = req.body.estado;
+    // Otros campos
+    if (req.body.estado !== undefined) {
+      console.log("📝 Estado recibido:", req.body.estado);
+      cambios.estado = req.body.estado;
+    }
 
-    // Si no hay nada para actualizar, devolvemos error
+    console.log("📦 Objeto de cambios a aplicar:", cambios);
+
+    // Validar cambios
     if (Object.keys(cambios).length === 0) {
+      console.warn("⚠️ No se enviaron campos para actualizar.");
       return res.status(400).json({ message: "No se enviaron campos para actualizar." });
     }
 
     // Ejecutar actualización
+    console.log("🚀 Ejecutando actualización en DB...");
     const [updated] = await Curso_Inscripcion.update(cambios, { where: { id } });
+    console.log("📊 Resultado update:", updated);
 
     if (updated === 1) {
-      const cursoActualizado = await Curso_Inscripcion.findByPk(id, {
-        include: [
-          { model: Curso, attributes: ["id", "id_materia", "periodo"] },
-          { model: Estudiante, attributes: ["id", "carnet"] }
-        ]
-      });
-
-      return res.send({
-        message: "Curso actualizado correctamente.",
-        curso: cursoActualizado
-      });
-    } else {
-      return res.status(404).json({ message: `No se encontró curso con id=${id}.` });
+      console.log("✅ Actualización exitosa. Obteniendo curso actualizado...");
+      return res.status(201).json("inscripcion actualizada con exito");
     }
 
   } catch (err) {
+    console.error("💥 Error en update:", err.message, err);
     res.status(500).send({
       message: "Error al actualizar curso con id=" + req.params.id,
       error: err.message
     });
   }
 };
+
 
 
 // Delete a Client with the specified id in the request

@@ -168,11 +168,11 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "User was deleted successfully!"
+                    message: "Curso eliminado correctamente!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete User with id=${id}. El usuario no fue encontado!`
+                    message: `No se pudo borrar el curso con id=${id}. El curso no fue encontado!`
                 });
             }
         })
@@ -190,12 +190,12 @@ exports.deleteAll = (req, res) => {
         truncate: false
     })
         .then(nums => {
-            res.send({ message: `${nums} User were deleted successfully!` });
+            res.send({ message: `${nums} Todos los cursos fueron eliminados correctamente!` });
         })
         .catch(err => {
             res.status(500).send({
                 message:
-                    err.message || "Some error occurred while removing all users."
+                    err.message || "Ocurrió un error al borrar los cursos."
             });
         });
 };

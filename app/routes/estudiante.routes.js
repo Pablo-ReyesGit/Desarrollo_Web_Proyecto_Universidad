@@ -3,7 +3,7 @@ module.exports = app => {
   const router = require("express").Router();
 
   // Crear nuevo estudiante
-  /**
+ /**
  * @swagger
  * /api/estudiantes:
  *   post:
@@ -21,9 +21,6 @@ module.exports = app => {
  *               fullname:
  *                 type: string
  *                 example: Pedro José
- *               carnet:
- *                 type: string
- *                 example: 2025001
  *               fechaNacimiento:
  *                 type: string
  *                 format: date
@@ -35,6 +32,9 @@ module.exports = app => {
  *                 type: string
  *                 format: date
  *                 example: 2025-01-10
+ *               id_curso:
+ *                 type: integer
+ *                 example: 1
  *               status:
  *                 type: boolean
  *                 example: true
