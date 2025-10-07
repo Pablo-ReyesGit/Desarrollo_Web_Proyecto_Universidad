@@ -3,6 +3,14 @@ const Estudiante = db.estudiantes;   // 👈 tu modelo se llama "estudiante"
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Estudiante
+const generarCarnet=()=>{
+    const fecha=new Date();
+    const year=fecha.getFullYear().toString().slice(-2);
+    const month=(fecha.getMonth()+1).toString().padStart(2,'0');
+    const day=fecha.getDate().toString().padStart(2,'0');
+    const randomNum=Math.floor(1000+Math.random()*9000);
+    return `E${year}${month}${day}${randomNum}`;
+}
 exports.create = (req, res) => {
     if (!req.body.fullname) {
         res.status(400).send({
@@ -10,13 +18,15 @@ exports.create = (req, res) => {
         });
         return;
     }
-
+    //generacion de carnet automatico estudiante
+    carnet=generarCarnet();
     const estudiante = {
         fullname: req.body.fullname,
-        carnet: req.body.carnet,
+        carnet: carnet,
         fechaNacimiento: req.body.fechaNacimiento,
         dpi: req.body.dpi,
-        ingreso: req.body.ingreso,
+        //new date permite que si no se envia una fecha se asigne la fecha actual
+        ingreso: req.body.ingreso ?? new Date(),
         status: req.body.status ? req.body.status : false
     };
 
@@ -34,8 +44,11 @@ exports.create = (req, res) => {
 // Retrieve all Estudiantes
 exports.findAll = (req, res) => {
     const fullname = req.query.fullname;
+    if(!fullname){
+        return res.status(400).send({message:"Debe proporcionar el nombre del estudiante."});
+    }
+    
     var condition = fullname ? { fullname: { [Op.iLike]: `%${fullname}%` } } : null;
-
     Estudiante.findAll({ where: condition })
         .then(data => {
             res.send(data);
@@ -50,7 +63,9 @@ exports.findAll = (req, res) => {
 // Find a single Estudiante with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
-
+    if(!id){
+        return res.status(400).send({message:"Debe proporcionar el id del estudiante."});
+    }
     Estudiante.findByPk(id)
         .then(data => {
             if (data) {
@@ -71,7 +86,9 @@ exports.findOne = (req, res) => {
 // Update a Estudiante by the id
 exports.update = (req, res) => {
     const id = req.params.id;
-
+    if(!id){
+        return res.status(400).send({message:"Debe proporcionar el id del estudiante."});
+    }
     Estudiante.update(req.body, {
         where: { id: id }
     })
@@ -96,7 +113,9 @@ exports.update = (req, res) => {
 // Delete a Estudiante with the specified id
 exports.delete = (req, res) => {
     const id = req.params.id;
-
+    if(!id){
+        return res.status(400).send({message:"Debe proporcionar el id del estudiante."});
+    }
     Estudiante.destroy({
         where: { id: id }
     })

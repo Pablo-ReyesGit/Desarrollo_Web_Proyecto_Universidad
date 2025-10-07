@@ -149,20 +149,6 @@ module.exports = app => {
    */
   router.delete("/delete/:id", carrera.delete);
 
-  /**
-   * @swagger
-   * /api/carrera/delete:
-   *   delete:
-   *     summary: Eliminar todas las carreras
-   *     tags: [Carreras]
-   *     responses:
-   *       200:
-   *         description: Todas las carreras eliminadas correctamente
-   *       500:
-   *         description: Error interno
-   */
-  router.delete("/delete", carrera.deleteAll);
-
   // Montar las rutas
   app.use("/api/carrera", router);
 };

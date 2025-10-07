@@ -182,7 +182,6 @@ module.exports = app => {
    *       500:
    *         description: Error en el servidor
    */
-  router.delete("/delete/", Verificador(["admin"]), usuario.deleteAll);
 
   app.use("/api/usuario", router);
 };

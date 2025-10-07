@@ -1,18 +1,16 @@
 const db = require("../models");
 const Horario = db.horarios;
 const Curso = db.cursos;
-const Op = db.Sequelize.Op;
-const sequelize = db.sequelize;
 
 // Create
 exports.create = async (req, res) => {
-  if (!req.body.dia_semana || !req.body.hora_inicio || !req.body.hora_fin || !req.body.aula || !req.body.nombre_curso) {
+  if (!req.body.dia_semana || !req.body.hora_inicio || !req.body.hora_fin || !req.body.aula || !req.body.periodo) {
     return res.status(400).send({ message: "Debe incluir todos los campos requeridos." });
   }
 
   // Buscar curso por nombre
   const curso = await Curso.findOne({
-    where: { nombre: req.body.nombre_curso },
+    where: { periodo: req.body.periodo },
     attributes: ["id"]
   });
 
@@ -36,7 +34,7 @@ exports.create = async (req, res) => {
 // Retrieve all
 exports.findAll = (req, res) => {
   Horario.findAll({
-    include: [{ model: Curso, attributes: ["id", "nombre"] }]
+    include: [{ model: Curso, attributes: ["id", "periodo"] }] //nombre no existe directamente en la bd
   })
     .then(data => res.send(data))
     .catch(err => res.status(500).send({ message: err.message }));
@@ -45,7 +43,9 @@ exports.findAll = (req, res) => {
 // Find one by id
 exports.findOne = (req, res) => {
   const id = req.params.id;
-
+  if(!id){
+    return res.status(400).send({ message: "Debe proporcionar el id del horario." });
+  }
   Horario.findByPk(id, { include: [Curso] })
     .then(data => {
       if (!data) return res.status(404).send({ message: "No encontrado" });
@@ -58,6 +58,9 @@ exports.findOne = (req, res) => {
 exports.update = async (req, res) => {
   try {
     const id = req.params.id;
+    if(!id){
+      return res.status(400).send({ message: "Debe proporcionar el id del horario." });
+    }
     const cambios = {};
 
     if (req.body.nombre_curso) {
@@ -94,17 +97,13 @@ exports.update = async (req, res) => {
 // Delete
 exports.delete = (req, res) => {
   const id = req.params.id;
+  if(!id){
+    return res.status(400).send({ message: "Debe proporcionar el id del horario." });
+  }
   Horario.destroy({ where: { id } })
     .then(num => {
       if (num === 1) res.send({ message: "Horario eliminado correctamente" });
       else res.send({ message: "No se encontró horario" });
     })
-    .catch(err => res.status(500).send({ message: err.message }));
-};
-
-// Delete all
-exports.deleteAll = (req, res) => {
-  Horario.destroy({ where: {}, truncate: false })
-    .then(nums => res.send({ message: `${nums} horarios eliminados.` }))
     .catch(err => res.status(500).send({ message: err.message }));
 };

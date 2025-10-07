@@ -9,36 +9,55 @@ const jwt = require("jsonwebtoken");
 // Create and Save a new Client
 exports.create = async (req, res) => {
     try{
-    // Validamos que dentro del  request no venga vacio el nombre, de lo contrario returna error
-    if (!req.body.correo || !req.body.contrasena) {
-        res.status(400).send({
-            message: "Necesita ingresar el correo o la contraseña!"
-        });
-        return;
-    }
-
-    const hashedPassword = await bcrypt.hash(req.body.contrasena, 10);
-
+        const correo = req.body.correo;
+        const contrasena = req.body.contrasena;
+        // Validamos que dentro del  request no venga vacio el nombre, de lo contrario returna error
+        if (!correo || !contrasena) {
+            res.status(400).send({
+                message: "Necesita ingresar el correo o la contraseña!"
+            });
+            return;
+        }
+        if(correo.length>50){
+            return res.status(400).send({ message: "El correo no puede tener mas de 50 caracteres" });
+        }
+        if(!correo.includes("@") || !correo.includes(".com")){
+            return res.status(400).send({ message: "El correo no es valido" });
+        }
+        if(contrasena.length<6){
+            return res.status(400).send({ message: "La contraseña debe tener al menos 6 caracteres" });
+        }
+        if(contrasena.length>20){
+            return res.status(400).send({ message: "La contraseña no puede tener mas de 20 caracteres" });
+        }
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{6,20}$/;
+        if (!passwordRegex.test(contrasena)) {
+            return res.status(400).send({
+                message: "La contraseña debe tener letras, números y al menos un carácter especial."
+            });
+        }
+        const hashedPassword = await bcrypt.hash(req.body.contrasena, 10);
+    
     // Create a Client, definiendo una variable con la estructura del reques para luego solo ser enviada como parametro mas adelante. 
-    const usuario = {
-        correo: req.body.correo,
-        contrasena: hashedPassword,
-        role: req.body.role || "user",
-        // utilizando ? nos ayuda a indicar que el paramatro puede ser opcional dado que si no viene, le podemos asignar un valor default
-        status: req.body.status ? req.body.status : false
-    };
+        const usuario = {
+            correo: correo,
+            contrasena: hashedPassword,
+            role: req.body.role || "user",
+            // utilizando ? nos ayuda a indicar que el paramatro puede ser opcional dado que si no viene, le podemos asignar un valor default
+            status: req.body.status ? req.body.status : false
+        };
 
     // Save a new Client into the database
-    Usuario.create(usuario)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the User."
+        Usuario.create(usuario)
+            .then(data => {
+                res.send(data);
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the User."
+                });
             });
-        });
     } catch(err){
         res.status(500).send({ message: err.message });
         console.log("hubo un error inesperado", err.message)
@@ -47,8 +66,11 @@ exports.create = async (req, res) => {
 
 // Retrieve all Client from the database.
 exports.findAll = (req, res) => {
-    const nombre = req.query.correo;
-    var condition = nombre ? { nombre: { [Op.iLike]: `%${nombre}%` } } : null;
+    const correo = req.query.correo;
+    if(!correo){
+        return res.status(400).send({ message: "El correo es obligatorio" });
+    }
+    var condition = correo ? { correo: { [Op.iLike]: `%${correo}%` } } : null;
 
     Usuario.findAll({ where: condition })
         .then(data => {
@@ -65,6 +87,12 @@ exports.findAll = (req, res) => {
 // Find a single Tutorial with an id
 exports.findOne = async (req, res) => {
     try {
+        if(!req.body.correo){
+            return res.status(400).send({ message: "El correo es obligatorio" });
+        }
+        if(!req.body.contrasena){
+            return res.status(400).send({ message: "La contraseña es obligatoria" });
+        }
         const usuario = await Usuario.findOne({ where: { correo: req.body.correo } });
         if (!usuario) {
             return res.status(404).send({ message: "Usuario no encontrado" });
@@ -90,8 +118,17 @@ exports.findOne = async (req, res) => {
 // Update a Tutorial by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
-
-    Usuario.update(req.body, {
+    if(!id){
+        return res.status(400).send({ message: "El id es obligatorio" });
+    }
+    const contrasena=req.body.contrasena;
+    if (contrasena) {
+        req.body.contrasena = bcrypt.hashSync(contrasena, 10);
+    }else{
+        return res.status(400).send({ message: "La contraseña es obligatoria" });
+    }
+    //solo se va a actualizar la contraseña, los otros parametros no son obligatorios actualizar
+    Usuario.update({contrasena: contrasena}, {
         where: { id: id }
     })
         .then(num => {
@@ -115,6 +152,9 @@ exports.update = (req, res) => {
 // Delete a Client with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
+    if(!id){
+        return res.status(400).send({ message: "El id es obligatorio" });
+    }
     // utilizamos el metodo destroy para eliminar el objeto mandamos la condicionante where id = parametro que recibimos 
     Usuario.destroy({
         where: { id: id }
@@ -133,23 +173,6 @@ exports.delete = (req, res) => {
         .catch(err => {
             res.status(500).send({
                 message: "Could not delete User with id=" + id
-            });
-        });
-};
-
-// Delete all Clients from the database.
-exports.deleteAll = (req, res) => {
-    Usuario.destroy({
-        where: {},
-        truncate: false
-    })
-        .then(nums => {
-            res.send({ message: `${nums} User were deleted successfully!` });
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while removing all users."
             });
         });
 };

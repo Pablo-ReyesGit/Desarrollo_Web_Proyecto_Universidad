@@ -15,7 +15,9 @@ exports.create = async (req, res) => {
         ) {
             return res.status(400).send({ message: "Content can not be empty!" });
         }
-
+        if(req.body.sueldo<0){
+            return res.status(400).send({ message: "El sueldo no puede ser negativo." });
+        }
         // 1. Crear registro sin carnet
         let docente = await Docente.create({
             DPI: req.body.DPI,
@@ -49,6 +51,9 @@ exports.create = async (req, res) => {
 // Retrieve all Docentes from the database.
 exports.findAll = (req, res) => {
     const nombre = req.query.nombre;
+    if(!nombre){
+        return res.status(400).send({message:"Debe proporcionar el nombre del docente."});
+    }
     var condition = nombre ? { nombre: { [Op.iLike]: `%${nombre}%` } } : null;
 
     Docente.findAll({ where: condition })
@@ -100,7 +105,9 @@ exports.getByCarnet = async (req, res) => {
 // Update a Docente by the id in the request
 exports.update = (req, res) => {
     const id = req.params.carnet;
-
+    if(!id){
+        return res.status(400).send({message:"Debe proporcionar el carnet del docente."});
+    }
     Docente.update(req.body, {
         where: { id: id }
     })
@@ -123,64 +130,38 @@ exports.update = (req, res) => {
 };
 
 exports.asignacionCarrera = async (req, res) => {
-  const carnet = req.params.carnet;
-  const nombre = req.body.nombre_carrera;
-
-  try {
-    // 1. Buscar la carrera por nombre
-
-    const carrera = await Carrera.findOne({
-      where: { nombre },
-      attributes: ["id"]
-    });
-
-    if (!carrera) {
-      return res.status(404).json({ message: "Carrera no encontrada" });
-    }
-
-    const id = carrera.id;
-
-    // 2. Actualizar el docente con el id_carrera encontrado
-    const [num] = await Docente.update(
-      { id_carrera: id, status_carrera: true}, // usamos solo lo que necesitamos
-      {
-        where: { carnet },
-        fields: ["id_carrera", "status_carrera"] // reforzamos que solo se actualice ese campo
-      }
-    );
-
-    // 3. Respuesta
-    if (num === 1) {
-      res.send({
-        message: "Se asignó correctamente la carrera al docente"
-      });
-    } else {
-      res.status(404).send({
-        message: `No se pudo actualizar Docente con carnet=${carnet}. Posiblemente no existe.`
-      });
-    }
-  } catch (err) {
-    res.status(500).send({
-      message: "Error al actualizar Docente con carnet=" + carnet
-    });
-  }
-};
-
-
-exports.desasignacionCarrera = async (req, res) => {
-    try{
     const carnet = req.params.carnet;
+    const nombre = req.body.nombre_carrera;
+    if(!carnet || !nombre){
+        return res.status(400).send({message:"Debe proporcionar el carnet del docente y el nombre de la carrera."});
+    }
+    try {
+        // 1. Buscar la carrera por nombre
 
-    const [num] = await Docente.update(
-      { status_carrera: false}, // usamos solo lo que necesitamos
-      {
-        where: { carnet },
-        fields: ["status_carrera"] // reforzamos que solo se actualice ese campo
-      }
-    )
+        const carrera = await Carrera.findOne({
+            where: { nombre },
+            attributes: ["id"]
+        });
+
+        if (!carrera) {
+        return res.status(404).json({ message: "Carrera no encontrada" });
+        }
+
+        const id = carrera.id;
+
+        // 2. Actualizar el docente con el id_carrera encontrado
+        const [num] = await Docente.update(
+        { id_carrera: id, status_carrera: true}, // usamos solo lo que necesitamos
+        {
+            where: { carnet },
+            fields: ["id_carrera", "status_carrera"] // reforzamos que solo se actualice ese campo
+        }
+        );
+
+        // 3. Respuesta
         if (num === 1) {
         res.send({
-            message: "Se desasigno correctamente"
+            message: "Se asignó correctamente la carrera al docente"
         });
         } else {
         res.status(404).send({
@@ -194,9 +175,46 @@ exports.desasignacionCarrera = async (req, res) => {
     }
 };
 
+
+exports.desasignacionCarrera = async (req, res) => {
+    try{
+        const carnet = req.params.carnet;
+        if(!carnet){
+            return res.status(400).send({message:"Debe proporcionar el carnet del docente."});
+        }
+        const [num] = await Docente.update(
+            { 
+                status_carrera: false
+            }, // usamos solo lo que necesitamos
+            {
+                where: { carnet },
+                fields: ["status_carrera"] // reforzamos que solo se actualice ese campo
+            }
+        );
+        if (num === 1) {
+            res
+                .status(200)
+                .send({
+                message: "Se desasigno correctamente"
+            });
+        } else {
+            res.status(404).send({
+                message: `No se pudo actualizar Docente con carnet=${carnet}. Posiblemente no existe.`
+            });
+        }
+    } catch (err) {
+        res.status(500).send({
+            message: "Error al actualizar Docente con carnet=" + carnet
+        });
+    }
+};
+
 // Delete a Docente with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.carnet;
+    if(!id){
+        return res.status(400).send({message:"Debe proporcionar el carnet del docente."}); //siempre validar esto antes de realizar cualquier operacion
+    }
     // utilizamos el metodo destroy para eliminar el objeto mandamos la condicionante where id = parametro que recibimos 
     Docente.destroy({
         where: { id: id }

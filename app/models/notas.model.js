@@ -1,4 +1,3 @@
-// models/nota.model.js
 module.exports = (sequelize, Sequelize) => {
   const Nota = sequelize.define("nota", {
     id: { 

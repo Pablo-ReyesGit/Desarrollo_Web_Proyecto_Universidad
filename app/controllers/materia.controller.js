@@ -7,7 +7,7 @@ const sequelize = db.sequelize;
 
 // Create and Save a new Client
 exports.create = async (req, res) => {
-    if (!req.body.nombre || !req.body.nombre_carrera) {
+    if (!req.body.nombre || !req.body.nombre_carrera || !req.body.creditos || !req.body.Semestre || req.body.Obligacion===undefined) {
         return res.status(400).send({ message: "debe incluir todos los detalles necesarios." });
     }
 
@@ -38,6 +38,9 @@ exports.create = async (req, res) => {
 // Retrieve all Client from the database.
 exports.findAll = (req, res) => {
     const nombre = req.query.nombre;
+    if(!nombre){
+        return res.status(400).send({message:"Debe proporcionar el nombre de la materia."});
+    }
     var condition = nombre ? { nombre: { [Op.iLike]: `%${nombre}%` } } : null;
 
     Materia.findAll({ where: condition })
@@ -91,7 +94,9 @@ exports.findOne = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const id = req.params.id;
-
+    if(!id){
+        return res.status(400).send({message:"Debe proporcionar el id de la materia."});
+    }
     // Creamos un objeto vacío para acumular los cambios
     const cambios = {};
 
@@ -149,6 +154,13 @@ exports.update = async (req, res) => {
 // Delete a Client with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
+    if(!id){
+        return res
+            .status(400)
+            .send({
+                message:"Debe proporcionar el id de la materia."
+            }); //siempre validar esto antes de realizar cualquier operacion
+    }
     // utilizamos el metodo destroy para eliminar el objeto mandamos la condicionante where id = parametro que recibimos 
     Materia.destroy({
         where: { id: id }

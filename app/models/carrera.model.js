@@ -11,6 +11,11 @@ module.exports = (sequelize, Sequelize) => {
         duracion: {
             type: Sequelize.INTEGER,   // equivale a TIMESTAMP WITH TIME ZONE
             field: "DURACION"
+        },
+        status:{
+            type: Sequelize.BOOLEAN,
+            defaultValue: true,
+            allowNull: false
         }
     });
 

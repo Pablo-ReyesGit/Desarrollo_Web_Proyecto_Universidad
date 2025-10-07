@@ -66,6 +66,9 @@ exports.create = async (req, res) => {
 // Retrieve all Client from the database.
 exports.findAll = (req, res) => {
     const id_materia = req.query.id_materia;
+    if(!id_materia){
+        return res.status(400).send({ message: "El id_materia es requerido" });
+    }
     var condition = id_materia ? { id_materia: { [Op.iLike]: `%${id_materia}%` } } : null;
 
     Curso.findAll({ where: condition })
@@ -110,9 +113,10 @@ exports.update = async (req, res) => {
     const cambios = {};
 
     // Si viene un nuevo nombre de materia, buscarla y asignar su id
-    if (req.body.nombre_materia) {
+    const nombre_materia=req.body.nombre_materia;
+    if (nombre_materia) {
       const materia = await Materia.findOne({
-        where: { nombre: req.body.nombre_materia },
+        where: { nombre: nombre_materia },
         attributes: ["id"]
       });
       
@@ -123,9 +127,10 @@ exports.update = async (req, res) => {
     }
 
     // Si viene un carnet de docente, buscarlo y asignar su id
-    if (req.body.carnet_docente) {
+    const carnet_docente=req.body.carnet_docente;
+    if (carnet_docente) {
       const docente = await Docente.findOne({
-        where: { carnet: req.body.carnet_docente },
+        where: { carnet: carnet_docente },
         attributes: ["id"]
       });
 
@@ -136,9 +141,12 @@ exports.update = async (req, res) => {
     }
 
     // Otros campos directos (solo si vienen en req.body)
-    if (req.body.periodo !== undefined) cambios.periodo = req.body.periodo;
-    if (req.body.seccion !== undefined) cambios.seccion = req.body.seccion;
-    if (req.body.cupo_maximo !== undefined) cambios.cupo_maximo = req.body.cupo_maximo;
+    const periodo=req.body.periodo;
+    const seccion=req.body.seccion;
+    const cupo_maximo=req.body.cupo_maximo;
+    if (periodo !== undefined) cambios.periodo = periodo;
+    if (seccion !== undefined) cambios.seccion = seccion;
+    if (cupo_maximo !== undefined) cambios.cupo_maximo = cupo_maximo;
 
     // Si no hay nada para actualizar, devolvemos error
     if (Object.keys(cambios).length === 0) {
@@ -156,10 +164,12 @@ exports.update = async (req, res) => {
         ]
       });
 
-      return res.send({
-        message: "Curso actualizado correctamente.",
-        curso: cursoActualizado
-      });
+      return res
+        .status(200)
+        .send({
+          message: "Curso actualizado correctamente.",
+          curso: cursoActualizado
+        });
     } else {
       return res.status(404).json({ message: `No se encontró curso con id=${id}.` });
     }

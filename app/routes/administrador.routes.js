@@ -180,7 +180,6 @@ router.post("/create/", administrador.create);
  *       500:
  *         description: Error en el servidor
  */
-    router.delete("/delete/", administrador.deleteAll);
     // Podemos utilizar como una ocpion app.use("EndPoint",router" para simplicar el URI
     // Ej.  http://localhost:Puerto/api/cliente/
     app.use("/api/administrador", router);

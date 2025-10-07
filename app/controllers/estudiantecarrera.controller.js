@@ -2,78 +2,84 @@ const db = require("../models");
 const EstudianteCarrera = db.estudiante_carreras;
 const Estudiante = db.estudiantes;
 const Carrera = db.carreras;
-const Op = db.Sequelize.Op;
-const sequelize = db.sequelize;
 
-// Create and Save a new EstudianteCarrera
 exports.create = async (req, res) => {
-  if (!req.body.carnet_estudiante || !req.body.nombre_carrera || !req.body.fecha_ingreso) {
-    return res.status(400).send({ message: "Debe incluir carnet_estudiante, nombre_carrera y fecha_ingreso." });
+  try {
+    if (!req.body.carnet_estudiante || !req.body.nombre_carrera || !req.body.fecha_ingreso) {
+      return res.status(400).send({ message: "Debe incluir carnet_estudiante, nombre_carrera y fecha_ingreso." });
+    }
+
+    const estudiante = await Estudiante.findOne({
+      where: { carnet: req.body.carnet_estudiante },
+      attributes: ["id"]
+    });
+    if (!estudiante) {
+      return res.status(404).json({ message: "Estudiante no encontrado." });
+    }
+
+    const carrera = await Carrera.findOne({
+      where: { nombre: req.body.nombre_carrera },
+      attributes: ["id"]
+    });
+    if (!carrera) {
+      return res.status(404).json({ message: "Carrera no encontrada." });
+    }
+
+    const registro = {
+      id_estudiante: estudiante.id,
+      id_carrera: carrera.id,
+      fecha_ingreso: req.body.fecha_ingreso,
+      fecha_egreso: req.body.fecha_egreso,
+      estado: req.body.estado
+    };
+
+    const data = await EstudianteCarrera.create(registro);
+    res.send(data);
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Error al crear EstudianteCarrera." });
   }
-
-  // Buscar estudiante por carnet
-  const estudiante = await Estudiante.findOne({
-    where: { carnet: req.body.carnet_estudiante },
-    attributes: ["id"]
-  });
-
-  if (!estudiante) {
-    return res.status(404).json({ message: "Estudiante no encontrado." });
-  }
-
-  // Buscar carrera por nombre
-  const carrera = await Carrera.findOne({
-    where: { nombre: req.body.nombre_carrera },
-    attributes: ["id"]
-  });
-
-  if (!carrera) {
-    return res.status(404).json({ message: "Carrera no encontrada." });
-  }
-
-  const registro = {
-    id_estudiante: estudiante.id,
-    id_carrera: carrera.id,
-    fecha_ingreso: req.body.fecha_ingreso,
-    fecha_egreso: req.body.fecha_egreso,
-    estado: req.body.estado
-  };
-
-  EstudianteCarrera.create(registro)
-    .then(data => res.send(data))
-    .catch(err => res.status(500).send({ message: err.message || "Error al crear EstudianteCarrera." }));
 };
 
-// Retrieve all registros
-exports.findAll = (req, res) => {
-  EstudianteCarrera.findAll({
-    include: [
-      { model: Estudiante, attributes: ["id", "carnet", "nombre"] },
-      { model: Carrera, attributes: ["id", "nombre"] }
-    ]
-  })
-    .then(data => res.send(data))
-    .catch(err => res.status(500).send({ message: err.message }));
+exports.findAll = async (req, res) => {
+  try {
+    const data = await EstudianteCarrera.findAll({
+      include: [
+        { model: Estudiante, attributes: ["id", "carnet", "nombre"] },
+        { model: Carrera, attributes: ["id", "nombre"] }
+      ],
+      order: [["id", "ASC"]]
+    });
+    res.send(data);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 };
 
-// Find one by id
-exports.findOne = (req, res) => {
-  const id = req.params.id;
-
-  EstudianteCarrera.findByPk(id, {
-    include: [Estudiante, Carrera]
-  })
-    .then(data => {
-      if (!data) return res.status(404).send({ message: "No encontrado" });
-      res.send(data);
-    })
-    .catch(err => res.status(500).send({ message: err.message }));
+exports.findOne = async (req, res) => {
+  try {
+    const id = req.params.id;
+    if(!id){
+      return res.status(400).send({ message: "Debe incluir el id del registro a buscar." });
+    }
+    const data = await EstudianteCarrera.findByPk(id, {
+      include: [
+        { model: Estudiante, attributes: ["id", "carnet", "nombre"] },
+        { model: Carrera, attributes: ["id", "nombre"] }
+      ]
+    });
+    if (!data) return res.status(404).send({ message: "No encontrado" });
+    res.send(data);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 };
 
-// Update registro
 exports.update = async (req, res) => {
   try {
     const id = req.params.id;
+    if(!id){
+      return res.status(400).send({ message: "Debe incluir el id del registro a actualizar." });
+    }
     const cambios = {};
 
     if (req.body.carnet_estudiante) {
@@ -105,30 +111,33 @@ exports.update = async (req, res) => {
     const [updated] = await EstudianteCarrera.update(cambios, { where: { id } });
 
     if (updated === 1) {
-      const actualizado = await EstudianteCarrera.findByPk(id, { include: [Estudiante, Carrera] });
-      return res.send({ message: "EstudianteCarrera actualizado correctamente.", estudianteCarrera: actualizado });
+      const actualizado = await EstudianteCarrera.findByPk(id, {
+        include: [
+          { model: Estudiante, attributes: ["id", "carnet", "nombre"] },
+          { model: Carrera, attributes: ["id", "nombre"] }
+        ]
+      });
+      res.send({ message: "EstudianteCarrera actualizado correctamente.", estudianteCarrera: actualizado });
     } else {
-      return res.status(404).json({ message: `No se encontró registro con id=${id}.` });
+      res.status(404).json({ message: `No se encontró registro con id=${id}.` });
     }
   } catch (err) {
     res.status(500).send({ message: "Error al actualizar EstudianteCarrera", error: err.message });
   }
 };
 
-// Delete registro
-exports.delete = (req, res) => {
-  const id = req.params.id;
-  EstudianteCarrera.destroy({ where: { id } })
-    .then(num => {
-      if (num === 1) res.send({ message: "Eliminado correctamente" });
-      else res.send({ message: "No se encontró registro" });
-    })
-    .catch(err => res.status(500).send({ message: err.message }));
+exports.delete = async (req, res) => {
+  try {
+    const id = req.params.id;
+    if(!id){
+      return res.status(400).send({ message: "Debe incluir el id del registro a eliminar." });
+    }
+    const num = await EstudianteCarrera.destroy({ where: { id } });
+    if (num === 1) res.send({ message: "Eliminado correctamente" });
+    else res.status(404).send({ message: "No se encontró registro" });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 };
 
-// Delete all
-exports.deleteAll = (req, res) => {
-  EstudianteCarrera.destroy({ where: {}, truncate: false })
-    .then(nums => res.send({ message: `${nums} registros eliminados.` }))
-    .catch(err => res.status(500).send({ message: err.message }));
-};
+

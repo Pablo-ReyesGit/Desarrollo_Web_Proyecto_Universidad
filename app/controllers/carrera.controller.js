@@ -8,7 +8,12 @@ exports.create = (req, res) => {
   if (!req.body.nombre || !req.body.facultad || !req.body.duracion) {
     return res.status(400).send({ message: "Debe incluir todos los detalles necesarios." });
   }
-
+  if(typeof req.body.duracion !== 'number' || req.body.duracion <= 0) {
+    return res.status(400).send({ message: "La duración debe ser un número positivo." });
+  }
+  if(req.body.nombre.length === 0 || req.body.facultad.length === 0) {
+    return res.status(400).send({ message: "El nombre y la facultad no pueden estar vacíos." });
+  }
   const carrera = {
     nombre: req.body.nombre,
     facultad: req.body.facultad,
@@ -25,6 +30,9 @@ exports.create = (req, res) => {
 // Retrieve all Carreras
 exports.findAll = (req, res) => {
   const nombre = req.query.nombre;
+  if(!nombre || nombre.length === 0) {
+    return res.status(400).send({ message: "Debe incluir el nombre de la carrera a buscar." });
+  }
   var condition = nombre ? { nombre: { [Op.iLike]: `%${nombre}%` } } : null;
 
   Carrera.findAll({ where: condition })
@@ -40,6 +48,9 @@ exports.findAll = (req, res) => {
 exports.findOne = async (req, res) => {
   try {
     const id = req.params.id;
+    if(!id) {
+      return res.status(400).send({ message: "Debe incluir el id de la carrera a buscar." });
+    }
     const carrera = await Carrera.findByPk(id);
     if (!carrera) {
       return res.status(404).send({ message: "Carrera no encontrada" });
@@ -54,7 +65,9 @@ exports.findOne = async (req, res) => {
 // Update a Carrera by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  if(!id){
+    return res.status(400).send({ message: "Debe incluir el id de la carrera a actualizar." });
+  }
   Carrera.update(req.body, { where: { id: id } })
     .then(num => {
       if (num == 1) {
@@ -71,6 +84,9 @@ exports.update = (req, res) => {
 // Delete a Carrera with the specified id
 exports.delete = (req, res) => {
   const id = req.params.id;
+  if(!id){
+    return res.status(400).send({ message: "Debe incluir el id de la carrera a eliminar." });
+  }
   Carrera.destroy({ where: { id: id } })
     .then(num => {
       if (num == 1) {
@@ -84,16 +100,6 @@ exports.delete = (req, res) => {
     });
 };
 
-// Delete all Carreras
-exports.deleteAll = (req, res) => {
-  Carrera.destroy({ where: {}, truncate: false })
-    .then(nums => {
-      res.send({ message: `${nums} carreras eliminadas correctamente!` });
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message || "Ocurrió un error al eliminar todas las carreras." });
-    });
-};
 
 // Find all active Carreras
 exports.findAllStatus = (req, res) => {
